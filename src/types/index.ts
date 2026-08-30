@@ -49,3 +49,11 @@ export interface ApiErrorBody {
   timestamp: string;
   path: string;
 }
+
+/** Item do histórico de auditoria (GET /audit-log/me) — já vem resumido/amigável do backend. */
+export interface AuditLogEntry {
+  acao: string;
+  resumo: string;
+  ip: string | null;
+  criadoEm: string;
+}

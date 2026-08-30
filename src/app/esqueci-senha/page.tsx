@@ -35,7 +35,7 @@ export default function EsqueciSenhaPage() {
   }
 
   return (
-    <AuthCard title="Esqueci minha senha">
+    <AuthCard title="Esqueci minha senha" backHref="/login">
       {enviado ? (
         <FormSuccess message={MENSAGEM_GENERICA} />
       ) : (

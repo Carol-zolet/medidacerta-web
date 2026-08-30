@@ -1,19 +1,28 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Identidade visual do MedidaCerta (reaproveitada do protótipo Figma) */
-  --color-primary: #4472c4;
-  --color-primary-dark: #35599c;
-  --color-bg-light: #ddebf7;
-  --color-text-dark: #1f3864;
+  /* Identidade visual do MedidaCerta — paleta "couro premium" */
+  --color-primary: #5c4033;
+  --color-primary-dark: #4a3229;
+  --color-bg-app: #fffbf5;
+  --color-bg-highlight: #f5e6d3;
+  --color-accent-gold: #c9a227;
+  --color-text-title: #3b2914;
   --color-text-body: #333333;
+  --color-danger: #8b3a3a;
+  --color-danger-dark: #6e2e2e;
 
   --font-sans:
     ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 body {
-  background-color: var(--color-bg-light);
+  background-color: var(--color-bg-app);
   color: var(--color-text-body);
   font-family: var(--font-sans);
+}
+
+/* Fonte serif para títulos (personalidade), corpo do texto continua sans-serif. */
+.font-title {
+  font-family: var(--font-serif), Georgia, 'Times New Roman', serif;
 }

@@ -42,7 +42,7 @@ function RedefinirSenhaForm() {
 
   if (!token) {
     return (
-      <AuthCard title="Redefinir senha">
+      <AuthCard title="Redefinir senha" backHref="/login">
         <FormError message="Link inválido: token não encontrado. Solicite um novo link em 'Esqueci minha senha'." />
         <p className="mt-6 text-center text-sm text-[var(--color-text-body)]">
           <Link href="/esqueci-senha" className="font-medium text-[var(--color-primary)] hover:underline">
@@ -54,7 +54,7 @@ function RedefinirSenhaForm() {
   }
 
   return (
-    <AuthCard title="Redefinir senha">
+    <AuthCard title="Redefinir senha" backHref="/login">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <FormError message={erro} />
         <Input

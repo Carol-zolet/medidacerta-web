@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { getMinhasMedidas, upsertMedidas } from '@/api/medidas';
 import { getErrorMessage } from '@/api/client';
 import { useAuth } from '@/context/AuthContext';
@@ -11,6 +12,7 @@ import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
 import { FormError } from '@/components/FormError';
 import { Spinner } from '@/components/Spinner';
+import { BackButton } from '@/components/BackButton';
 
 interface FormState {
   busto: string;
@@ -44,6 +46,7 @@ function MedidasForm() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
+  const [jaTinhaMedidas, setJaTinhaMedidas] = useState(false);
   const { recarregarUsuario } = useAuth();
   const router = useRouter();
 
@@ -51,6 +54,7 @@ function MedidasForm() {
     getMinhasMedidas()
       .then((medidas) => {
         if (medidas) {
+          setJaTinhaMedidas(true);
           setForm({
             busto: medidas.busto,
             torax: medidas.torax,
@@ -85,6 +89,7 @@ function MedidasForm() {
       });
       // O código de acesso pode ter sido gerado agora (primeiro cadastro) — recarrega o usuário.
       await recarregarUsuario();
+      toast.success(jaTinhaMedidas ? 'Medidas atualizadas com sucesso!' : 'Medidas cadastradas com sucesso!');
       router.push('/painel');
     } catch (error) {
       setErro(getErrorMessage(error, 'Não foi possível salvar suas medidas.'));
@@ -106,8 +111,9 @@ function MedidasForm() {
     <div className="min-h-screen">
       <Header />
       <div className="mx-auto max-w-xl px-4 py-10">
-        <div className="rounded-xl bg-white p-8 shadow-md">
-          <h1 className="mb-6 text-2xl font-bold text-[var(--color-text-dark)]">Minhas medidas</h1>
+        <div className="rounded-xl border border-[var(--color-accent-gold)]/25 bg-white p-8 shadow-md">
+          <BackButton fallbackHref="/painel" />
+          <h1 className="font-title mb-6 text-2xl font-bold text-[var(--color-text-title)]">Minhas medidas</h1>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <FormError message={erro} />
             <div className="grid grid-cols-2 gap-4">

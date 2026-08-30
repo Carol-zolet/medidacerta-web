@@ -10,6 +10,7 @@ import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
 import { FormError } from '@/components/FormError';
 import { PasswordChecklist, senhaValida } from '@/components/PasswordChecklist';
+import { PasswordStrengthMeter } from '@/components/PasswordStrengthMeter';
 
 export default function CadastroPage() {
   const [nome, setNome] = useState('');
@@ -41,7 +42,7 @@ export default function CadastroPage() {
   }
 
   return (
-    <AuthCard title="Criar conta">
+    <AuthCard title="Criar conta" backHref="/login">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <FormError message={erro} />
         <div className="grid grid-cols-2 gap-3">
@@ -78,6 +79,7 @@ export default function CadastroPage() {
           value={senha}
           onChange={(e) => setSenha(e.target.value)}
         />
+        <PasswordStrengthMeter senha={senha} />
         <PasswordChecklist senha={senha} />
         <Button type="submit" loading={enviando}>
           Cadastrar

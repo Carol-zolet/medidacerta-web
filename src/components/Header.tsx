@@ -14,8 +14,8 @@ export function Header() {
   }
 
   return (
-    <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
-      <span className="text-lg font-bold text-[var(--color-text-dark)]">MedidaCerta</span>
+    <header className="flex items-center justify-between border-b border-[var(--color-accent-gold)]/25 bg-white px-6 py-4">
+      <span className="font-title text-lg font-bold text-[var(--color-text-title)]">MedidaCerta</span>
       <div className="flex items-center gap-4">
         {usuario && <span className="text-sm text-[var(--color-text-body)]">{usuario.nome}</span>}
         <Button variant="secondary" onClick={handleLogout}>

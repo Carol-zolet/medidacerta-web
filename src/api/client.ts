@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios';
+import { toast } from 'sonner';
 import type { ApiErrorBody } from '../types';
 import { clearToken, getToken } from './token';
 
@@ -33,6 +34,17 @@ apiClient.interceptors.response.use(
       clearToken();
       onUnauthorized?.();
     }
+
+    // Falha de rede genérica (sem resposta do servidor): notifica via toast em
+    // qualquer lugar da aplicação, sem precisar repetir isso em cada chamada.
+    // `id` fixo evita empilhar toasts duplicados se várias requisições
+    // falharem ao mesmo tempo (ex.: painel carregando usuário e medidas juntos).
+    if (!error.response) {
+      toast.error('Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.', {
+        id: 'erro-rede',
+      });
+    }
+
     return Promise.reject(error);
   },
 );
