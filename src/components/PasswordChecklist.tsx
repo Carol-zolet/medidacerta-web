@@ -1,3 +1,5 @@
+'use client';
+
 const TEM_8_CARACTERES = (senha: string) => senha.length >= 8;
 const TEM_NUMERO = (senha: string) => /\d/.test(senha);
 

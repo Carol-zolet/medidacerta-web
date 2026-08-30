@@ -1,14 +1,16 @@
 # medidacerta-web
 
-Frontend React do MedidaCerta — SPA em React + TypeScript + Vite, com Tailwind CSS, consumindo
+Frontend do MedidaCerta — SPA em Next.js (App Router) + TypeScript, com Tailwind CSS, consumindo
 a API do backend NestJS (`medidacerta-api`). Projeto acadêmico (Fase 2).
+
+> Migrado de React + Vite para Next.js mantendo o mesmo comportamento funcional e visual. É um
+> dashboard atrás de autenticação: não usa SSR/SEO, o JWT continua no `localStorage` e a proteção
+> de rota continua sendo feita em componente client-side (sem middleware/cookies do Next.js).
 
 ## Stack
 
-- React 18 + TypeScript
-- Vite
-- Tailwind CSS v4 (`@tailwindcss/vite`)
-- React Router v6
+- Next.js (App Router) + TypeScript
+- Tailwind CSS v4 (`@tailwindcss/postcss`)
 - Axios
 
 ## Setup local
@@ -25,16 +27,17 @@ npm install
 cp .env.example .env
 ```
 
-Edite `.env` e defina `VITE_API_URL` apontando para o backend:
+Edite `.env` e defina `NEXT_PUBLIC_API_URL` apontando para o backend (o prefixo `NEXT_PUBLIC_`
+é exigido pelo Next.js para variáveis expostas ao navegador):
 
-- **Local:** `VITE_API_URL=http://localhost:3000` (padrão do `.env.example`)
-- **Produção:** `VITE_API_URL=https://sua-api-em-producao.exemplo.com`
+- **Local:** `NEXT_PUBLIC_API_URL=http://localhost:3000` (padrão do `.env.example`)
+- **Produção:** `NEXT_PUBLIC_API_URL=https://sua-api-em-producao.exemplo.com`
 
 ### 3. Rodar o backend
 
 Este frontend depende da API `medidacerta-api` rodando (veja o README daquele repositório para
 subir o Postgres via Docker e rodar `npm run start:dev`). Confirme que a API está de pé em
-`http://localhost:3000` (ou na URL configurada em `VITE_API_URL`) antes de usar o app.
+`http://localhost:3000` (ou na URL configurada em `NEXT_PUBLIC_API_URL`) antes de usar o app.
 
 ### 4. Rodar o frontend em modo dev
 
@@ -42,13 +45,14 @@ subir o Postgres via Docker e rodar `npm run start:dev`). Confirme que a API est
 npm run dev
 ```
 
-A aplicação sobe em `http://localhost:5173`.
+A aplicação sobe em `http://localhost:5173` (porta fixada para não colidir com o backend, que
+usa a 3000).
 
 ## Build de produção
 
 ```bash
 npm run build
-npm run preview
+npm run start
 ```
 
 ## Fluxo da aplicação
@@ -63,5 +67,19 @@ npm run preview
    de desenvolvimento o token é apenas logado no console do backend (não há envio real de e-mail
    neste MVP).
 
-Rotas protegidas redirecionam para `/login` automaticamente se não houver um token válido, ou se
-qualquer requisição autenticada retornar 401 (sessão expirada/inválida).
+Rotas protegidas (`/medidas`, `/painel`) usam um componente `ProtectedRoute` (client-side) que
+redireciona para `/login` se não houver um token válido, ou se qualquer requisição autenticada
+retornar 401 (sessão expirada/inválida). Qualquer caminho não mapeado também redireciona para
+`/login`.
+
+## Estrutura
+
+```
+src/
+  app/            # rotas (App Router): cada pasta = uma URL, page.tsx = a tela
+  api/            # cliente HTTP (axios) e chamadas à API, por domínio
+  components/     # componentes de UI reutilizáveis
+  context/        # AuthContext (sessão, token, usuário logado)
+  routes/         # ProtectedRoute (guarda de rota client-side)
+  types/          # tipos compartilhados com a API
+```

@@ -1,14 +1,17 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getMinhasMedidas } from '../api/medidas';
-import { deleteMe } from '../api/users';
-import { getErrorMessage } from '../api/client';
-import { useAuth } from '../context/AuthContext';
-import { Header } from '../components/Header';
-import { Button } from '../components/Button';
-import { FormError } from '../components/FormError';
-import { Spinner } from '../components/Spinner';
-import type { Medidas } from '../types';
+import { useRouter } from 'next/navigation';
+import { getMinhasMedidas } from '@/api/medidas';
+import { deleteMe } from '@/api/users';
+import { getErrorMessage } from '@/api/client';
+import { useAuth } from '@/context/AuthContext';
+import { ProtectedRoute } from '@/routes/ProtectedRoute';
+import { Header } from '@/components/Header';
+import { Button } from '@/components/Button';
+import { FormError } from '@/components/FormError';
+import { Spinner } from '@/components/Spinner';
+import type { Medidas } from '@/types';
 
 const LABELS_MEDIDAS: { chave: keyof Medidas; label: string; sufixo: string }[] = [
   { chave: 'busto', label: 'Busto', sufixo: 'cm' },
@@ -26,7 +29,7 @@ function formatarData(iso: string): string {
   });
 }
 
-export function Painel() {
+function PainelConteudo() {
   const { usuario, logout } = useAuth();
   const [medidas, setMedidas] = useState<Medidas | null>(null);
   const [carregando, setCarregando] = useState(true);
@@ -34,7 +37,7 @@ export function Painel() {
   const [copiado, setCopiado] = useState(false);
   const [confirmandoExclusao, setConfirmandoExclusao] = useState(false);
   const [excluindo, setExcluindo] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => {
     getMinhasMedidas()
@@ -60,7 +63,7 @@ export function Painel() {
     try {
       await deleteMe();
       logout();
-      navigate('/login');
+      router.push('/login');
     } catch (error) {
       setErro(getErrorMessage(error, 'Não foi possível excluir sua conta.'));
       setExcluindo(false);
@@ -110,7 +113,7 @@ export function Painel() {
         <div className="mt-6 rounded-xl bg-white p-8 shadow-md">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-bold text-[var(--color-text-dark)]">Minhas medidas</h2>
-            <Button variant="secondary" onClick={() => navigate('/medidas')}>
+            <Button variant="secondary" onClick={() => router.push('/medidas')}>
               {medidas ? 'Editar medidas' : 'Cadastrar medidas'}
             </Button>
           </div>
@@ -166,5 +169,13 @@ export function Painel() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PainelPage() {
+  return (
+    <ProtectedRoute>
+      <PainelConteudo />
+    </ProtectedRoute>
   );
 }

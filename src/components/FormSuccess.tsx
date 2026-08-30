@@ -1,3 +1,5 @@
+'use client';
+
 export function FormSuccess({ message }: { message: string | null }) {
   if (!message) return null;
 

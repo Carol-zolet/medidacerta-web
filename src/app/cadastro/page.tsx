@@ -1,21 +1,24 @@
-import { useState, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { register } from '../api/auth';
-import { getErrorMessage } from '../api/client';
-import { AuthCard } from '../components/AuthCard';
-import { Input } from '../components/Input';
-import { Button } from '../components/Button';
-import { FormError } from '../components/FormError';
-import { PasswordChecklist, senhaValida } from '../components/PasswordChecklist';
+'use client';
 
-export function Cadastro() {
+import { useState, type FormEvent } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { register } from '@/api/auth';
+import { getErrorMessage } from '@/api/client';
+import { AuthCard } from '@/components/AuthCard';
+import { Input } from '@/components/Input';
+import { Button } from '@/components/Button';
+import { FormError } from '@/components/FormError';
+import { PasswordChecklist, senhaValida } from '@/components/PasswordChecklist';
+
+export default function CadastroPage() {
   const [nome, setNome] = useState('');
   const [sobrenome, setSobrenome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -29,7 +32,7 @@ export function Cadastro() {
     setEnviando(true);
     try {
       await register({ nome, sobrenome, email, senha });
-      navigate('/login', { state: { cadastroConcluido: true } });
+      router.push('/login?cadastro=1');
     } catch (error) {
       setErro(getErrorMessage(error, 'Não foi possível concluir o cadastro.'));
     } finally {
@@ -82,7 +85,7 @@ export function Cadastro() {
       </form>
       <p className="mt-6 text-center text-sm text-[var(--color-text-body)]">
         Já tem conta?{' '}
-        <Link to="/login" className="font-medium text-[var(--color-primary)] hover:underline">
+        <Link href="/login" className="font-medium text-[var(--color-primary)] hover:underline">
           Entrar
         </Link>
       </p>

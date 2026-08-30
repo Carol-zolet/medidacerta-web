@@ -1,3 +1,5 @@
+'use client';
+
 import type { ReactNode } from 'react';
 
 /** Cartão branco centralizado usado nas telas de autenticação (login, cadastro, senha). */

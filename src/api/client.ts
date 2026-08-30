@@ -3,7 +3,7 @@ import type { ApiErrorBody } from '../types';
 import { clearToken, getToken } from './token';
 
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
 
 apiClient.interceptors.request.use((config) => {

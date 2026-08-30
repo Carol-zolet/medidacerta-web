@@ -1,20 +1,24 @@
-import { useState, type FormEvent } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { resetPassword } from '../api/auth';
-import { getErrorMessage } from '../api/client';
-import { AuthCard } from '../components/AuthCard';
-import { Input } from '../components/Input';
-import { Button } from '../components/Button';
-import { FormError } from '../components/FormError';
-import { PasswordChecklist, senhaValida } from '../components/PasswordChecklist';
+'use client';
 
-export function RedefinirSenha() {
-  const [searchParams] = useSearchParams();
+import { Suspense, useState, type FormEvent } from 'react';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { resetPassword } from '@/api/auth';
+import { getErrorMessage } from '@/api/client';
+import { AuthCard } from '@/components/AuthCard';
+import { Input } from '@/components/Input';
+import { Button } from '@/components/Button';
+import { FormError } from '@/components/FormError';
+import { Spinner } from '@/components/Spinner';
+import { PasswordChecklist, senhaValida } from '@/components/PasswordChecklist';
+
+function RedefinirSenhaForm() {
+  const searchParams = useSearchParams();
   const token = searchParams.get('token') ?? '';
   const [novaSenha, setNovaSenha] = useState('');
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -28,7 +32,7 @@ export function RedefinirSenha() {
     setEnviando(true);
     try {
       await resetPassword(token, novaSenha);
-      navigate('/login', { state: { senhaRedefinida: true } });
+      router.push('/login?senha=redefinida');
     } catch (error) {
       setErro(getErrorMessage(error, 'Token inválido ou expirado. Solicite um novo link.'));
     } finally {
@@ -41,7 +45,7 @@ export function RedefinirSenha() {
       <AuthCard title="Redefinir senha">
         <FormError message="Link inválido: token não encontrado. Solicite um novo link em 'Esqueci minha senha'." />
         <p className="mt-6 text-center text-sm text-[var(--color-text-body)]">
-          <Link to="/esqueci-senha" className="font-medium text-[var(--color-primary)] hover:underline">
+          <Link href="/esqueci-senha" className="font-medium text-[var(--color-primary)] hover:underline">
             Solicitar novo link
           </Link>
         </p>
@@ -68,5 +72,13 @@ export function RedefinirSenha() {
         </Button>
       </form>
     </AuthCard>
+  );
+}
+
+export default function RedefinirSenhaPage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <RedefinirSenhaForm />
+    </Suspense>
   );
 }

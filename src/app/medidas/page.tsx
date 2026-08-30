@@ -1,13 +1,16 @@
+'use client';
+
 import { useEffect, useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getMinhasMedidas, upsertMedidas } from '../api/medidas';
-import { getErrorMessage } from '../api/client';
-import { useAuth } from '../context/AuthContext';
-import { Header } from '../components/Header';
-import { Input } from '../components/Input';
-import { Button } from '../components/Button';
-import { FormError } from '../components/FormError';
-import { Spinner } from '../components/Spinner';
+import { useRouter } from 'next/navigation';
+import { getMinhasMedidas, upsertMedidas } from '@/api/medidas';
+import { getErrorMessage } from '@/api/client';
+import { useAuth } from '@/context/AuthContext';
+import { ProtectedRoute } from '@/routes/ProtectedRoute';
+import { Header } from '@/components/Header';
+import { Input } from '@/components/Input';
+import { Button } from '@/components/Button';
+import { FormError } from '@/components/FormError';
+import { Spinner } from '@/components/Spinner';
 
 interface FormState {
   busto: string;
@@ -36,13 +39,13 @@ const FORM_VAZIO: FormState = {
   numero_calcado: '',
 };
 
-export function Medidas() {
+function MedidasForm() {
   const [form, setForm] = useState<FormState>(FORM_VAZIO);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
   const { recarregarUsuario } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => {
     getMinhasMedidas()
@@ -82,7 +85,7 @@ export function Medidas() {
       });
       // O código de acesso pode ter sido gerado agora (primeiro cadastro) — recarrega o usuário.
       await recarregarUsuario();
-      navigate('/painel');
+      router.push('/painel');
     } catch (error) {
       setErro(getErrorMessage(error, 'Não foi possível salvar suas medidas.'));
     } finally {
@@ -129,5 +132,13 @@ export function Medidas() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function MedidasPage() {
+  return (
+    <ProtectedRoute>
+      <MedidasForm />
+    </ProtectedRoute>
   );
 }

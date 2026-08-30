@@ -1,19 +1,29 @@
+# dependencies
 node_modules
-dist
-dist-ssr
-*.local
-*.tsbuildinfo
 
-.claude/
+# next.js
+.next/
+out/
+build
 
-.env
-.env.*.local
-
+# misc
 .DS_Store
 Thumbs.db
+*.pem
 
+# debug
 *.log
 npm-debug.log*
+
+# local env files
+.env
+.env*.local
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+.claude/
 
 .vscode/*
 !.vscode/extensions.json

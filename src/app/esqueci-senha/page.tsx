@@ -1,17 +1,19 @@
+'use client';
+
 import { useState, type FormEvent } from 'react';
-import { Link } from 'react-router-dom';
-import { forgotPassword } from '../api/auth';
-import { getErrorMessage } from '../api/client';
-import { AuthCard } from '../components/AuthCard';
-import { Input } from '../components/Input';
-import { Button } from '../components/Button';
-import { FormError } from '../components/FormError';
-import { FormSuccess } from '../components/FormSuccess';
+import Link from 'next/link';
+import { forgotPassword } from '@/api/auth';
+import { getErrorMessage } from '@/api/client';
+import { AuthCard } from '@/components/AuthCard';
+import { Input } from '@/components/Input';
+import { Button } from '@/components/Button';
+import { FormError } from '@/components/FormError';
+import { FormSuccess } from '@/components/FormSuccess';
 
 const MENSAGEM_GENERICA =
   'Se o e-mail informado estiver cadastrado, você receberá instruções para redefinir sua senha.';
 
-export function EsqueciSenha() {
+export default function EsqueciSenhaPage() {
   const [email, setEmail] = useState('');
   const [enviado, setEnviado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -57,7 +59,7 @@ export function EsqueciSenha() {
         </form>
       )}
       <p className="mt-6 text-center text-sm text-[var(--color-text-body)]">
-        <Link to="/login" className="font-medium text-[var(--color-primary)] hover:underline">
+        <Link href="/login" className="font-medium text-[var(--color-primary)] hover:underline">
           Voltar para o login
         </Link>
       </p>

@@ -1,14 +1,16 @@
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from './Button';
 
 export function Header() {
   const { usuario, logout } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   function handleLogout() {
     logout();
-    navigate('/login');
+    router.push('/login');
   }
 
   return (

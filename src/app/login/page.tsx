@@ -1,31 +1,31 @@
-import { useState, type FormEvent } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { login as loginRequest } from '../api/auth';
-import { getErrorMessage } from '../api/client';
-import { useAuth } from '../context/AuthContext';
-import { AuthCard } from '../components/AuthCard';
-import { Input } from '../components/Input';
-import { Button } from '../components/Button';
-import { FormError } from '../components/FormError';
-import { FormSuccess } from '../components/FormSuccess';
+'use client';
 
-interface LocationState {
-  cadastroConcluido?: boolean;
-  senhaRedefinida?: boolean;
-}
+import { Suspense, useState, type FormEvent } from 'react';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { login as loginRequest } from '@/api/auth';
+import { getErrorMessage } from '@/api/client';
+import { useAuth } from '@/context/AuthContext';
+import { AuthCard } from '@/components/AuthCard';
+import { Input } from '@/components/Input';
+import { Button } from '@/components/Button';
+import { FormError } from '@/components/FormError';
+import { FormSuccess } from '@/components/FormSuccess';
+import { Spinner } from '@/components/Spinner';
 
-export function Login() {
+function LoginForm() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
   const { login } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const state = location.state as LocationState | null;
-  const mensagemSucesso = state?.cadastroConcluido
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  // Equivalente ao "location.state" do React Router: aqui usamos query
+  // string, já que o App Router não tem estado de navegação declarativo.
+  const mensagemSucesso = searchParams.get('cadastro')
     ? 'Cadastro concluído! Faça login para continuar.'
-    : state?.senhaRedefinida
+    : searchParams.get('senha') === 'redefinida'
       ? 'Senha redefinida com sucesso! Faça login com sua nova senha.'
       : null;
 
@@ -37,7 +37,7 @@ export function Login() {
     try {
       const { access_token } = await loginRequest({ email, senha });
       await login(access_token);
-      navigate('/painel');
+      router.push('/painel');
     } catch (error) {
       setErro(getErrorMessage(error, 'Não foi possível entrar. Verifique seu e-mail e senha.'));
     } finally {
@@ -68,7 +68,7 @@ export function Login() {
           value={senha}
           onChange={(e) => setSenha(e.target.value)}
         />
-        <Link to="/esqueci-senha" className="text-right text-sm text-[var(--color-primary)] hover:underline">
+        <Link href="/esqueci-senha" className="text-right text-sm text-[var(--color-primary)] hover:underline">
           Esqueci minha senha
         </Link>
         <Button type="submit" loading={enviando}>
@@ -77,10 +77,18 @@ export function Login() {
       </form>
       <p className="mt-6 text-center text-sm text-[var(--color-text-body)]">
         Ainda não tem conta?{' '}
-        <Link to="/cadastro" className="font-medium text-[var(--color-primary)] hover:underline">
+        <Link href="/cadastro" className="font-medium text-[var(--color-primary)] hover:underline">
           Cadastre-se
         </Link>
       </p>
     </AuthCard>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <LoginForm />
+    </Suspense>
   );
 }
